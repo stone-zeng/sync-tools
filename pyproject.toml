@@ -2,4 +2,7 @@
 name = "sync-tools"
 version = "0.1.0"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "bandersnatch>=6.6.0",
+    "patch-package-py>=0.1.3",
+]

@@ -1,0 +1,117 @@
+diff --git a/bandersnatch_filter_plugins/filename_name.py b/bandersnatch_filter_plugins/filename_name.py
+index 90c5bc5..3ad55bc 100644
+--- a/bandersnatch_filter_plugins/filename_name.py
++++ b/bandersnatch_filter_plugins/filename_name.py
+@@ -36,27 +36,30 @@ class ExcludePlatformFilter(FilterReleaseFilePlugin):
+         "py3.10",
+         "py3.11",
+         "py3.12",
++        "py3.13",
++        "py3.14",
++        "py3.15",
+     ]
+ 
+-    _windowsPlatformTypes = [".win32", "-win32", "win_amd64", "win-amd64"]
+-
+-    _linuxPlatformTypes = [
+-        "linux-i686",  # PEP 425
+-        "linux-x86_64",  # PEP 425
+-        "linux_armv7l",  # https://github.com/pypa/warehouse/pull/2010
+-        "linux_armv6l",  # https://github.com/pypa/warehouse/pull/2012
+-        "manylinux1_i686",  # PEP 513
+-        "manylinux1_x86_64",  # PEP 513
+-        "manylinux2010_i686",  # PEP 571
+-        "manylinux2010_x86_64",  # PEP 571
+-        "manylinux2014_x86_64",  # PEP 599
+-        "manylinux2014_i686",  # PEP 599
+-        "manylinux2014_aarch64",  # PEP 599
+-        "manylinux2014_armv7l",  # PEP 599
+-        "manylinux2014_ppc64",  # PEP 599
+-        "manylinux2014_ppc64le",  # PEP 599
+-        "manylinux2014_s390x",  # PEP 599
+-    ]
++    # _windowsPlatformTypes = [".win32", "-win32", "win_amd64", "win-amd64"]
++
++    # _linuxPlatformTypes = [
++    #     "linux-i686",  # PEP 425
++    #     "linux-x86_64",  # PEP 425
++    #     "linux_armv7l",  # https://github.com/pypa/warehouse/pull/2010
++    #     "linux_armv6l",  # https://github.com/pypa/warehouse/pull/2012
++    #     "manylinux1_i686",  # PEP 513
++    #     "manylinux1_x86_64",  # PEP 513
++    #     "manylinux2010_i686",  # PEP 571
++    #     "manylinux2010_x86_64",  # PEP 571
++    #     "manylinux2014_x86_64",  # PEP 599
++    #     "manylinux2014_i686",  # PEP 599
++    #     "manylinux2014_aarch64",  # PEP 599
++    #     "manylinux2014_armv7l",  # PEP 599
++    #     "manylinux2014_ppc64",  # PEP 599
++    #     "manylinux2014_ppc64le",  # PEP 599
++    #     "manylinux2014_s390x",  # PEP 599
++    # ]
+ 
+     def initialize_plugin(self) -> None:
+         """
+@@ -75,38 +78,30 @@ class ExcludePlatformFilter(FilterReleaseFilePlugin):
+             logger.error(f"Plugin {self.name}: missing platforms= setting")
+             return
+ 
+-        for platform in tags:
+-            lplatform = platform.lower()
+-
+-            if lplatform in ("windows", "win"):
+-                # PEP 425
+-                # see also setuptools/package_index.py
+-                self._patterns.extend(self._windowsPlatformTypes)
+-                # PEP 527
+-                self._packagetypes.extend(["bdist_msi", "bdist_wininst"])
+-
+-            elif lplatform in ("macos", "macosx"):
+-                self._patterns.extend(["macosx_", "macosx-"])
+-                self._packagetypes.extend(["bdist_dmg"])
+-
+-            elif lplatform in ("freebsd"):
+-                # concerns only very few files
+-                self._patterns.extend([".freebsd", "-freebsd"])
+-
+-            elif lplatform in ("linux"):
+-                self._patterns.extend(self._linuxPlatformTypes)
+-                self._packagetypes.extend(["bdist_rpm"])
+-
+-            elif lplatform in self._pythonversions:
+-                lversion = lplatform
+-                self._patterns.extend(parse_version(lversion))
+-
+-            # check for platform specific architectures
+-            elif lplatform in self._windowsPlatformTypes:
+-                self._patterns.extend([lplatform])
+-
+-            elif lplatform in self._linuxPlatformTypes:
+-                self._patterns.extend([lplatform])
++        self._patterns = [
++            ".win32",
++            "-win32",
++            "macosx_",
++            "macosx-",
++            ".freebsd",
++            "-freebsd",
++            "-pp",
++            "-ip",
++            "-jy",
++            "-musllinux",
++            "_i686",
++            "_aarch64",
++            "_armv6l",
++            "_armv7l",
++            "_ppc64",
++            "_ppc64le",
++            "_s390x",
++        ]
++        self._packagetypes = ["bdist_dmg", "bdist_rpm"]
++
++        for version in tags:
++            if version in self._pythonversions:
++                self._patterns.extend(parse_version(version))
+ 
+         logger.info(f"Initialized {self.name} plugin with {self._patterns!r}")
+ 
