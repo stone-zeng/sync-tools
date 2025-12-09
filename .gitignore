@@ -1,2 +1,9 @@
 .venv
+
+github/*.git
+github/*.tar.gz
+
+pypi/log
+pypi/pypi
+
 vscode/vsix
